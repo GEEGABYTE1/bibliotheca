@@ -6,16 +6,16 @@ import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 
 export default function signInForm() {
+    
     const supabase = createClient("https://vkulxphxyccehtzaqngk.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdWx4cGh4eWNjZWh0emFxbmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzcyMDIyNjMsImV4cCI6MTk5Mjc3ODI2M30.KiXG-sdddT_3sCP9lLGmF1iUsfkk8rK1ZebsDHae5LU")
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [authStatus, setStatus] = useState(false)
 
     function validateUser(username) {
         let error 
         if (username === '') {
-            error = "Username is undefined"
+            error = "Email is undefined"
         } 
 
         return error
@@ -30,55 +30,45 @@ export default function signInForm() {
         return error
     }
 
-    function handleError() {
-        setStatus(false)
-        alert(`No Email '${username}' Found! ~ Please Sign up 😎`)
-    }
-
-    async function signInFunction() {
-        await supabase.auth.signInWithPassword({
+    async function signUpFunction() {
+        const {data, error} = await supabase.auth.signUp({
             email: username,
-            password: password,
-          }).then(
-            result => {
-                try {
-                    console.log(result.data)
-                    const auth_status = result.data['user']['aud']
-                    console.log("Auth Status of User: ", auth_status)
-                    setStatus(true)
-                }
-                catch (err) {
-                    handleError()
-                }
-                
-            }
-          )
-         
-
-          
-        
+            password: password
+        })
+        return data
     }
 
-    function HomePage() {
-        return (
-            <div>
+    useEffect(() => {
+        if (buttonSubmission === true) {
+            const result = signUpFunction()
+            console.log("Username adding to Supabase :", username)
+            console.log("Signing up Result: ", result)
+            setbuttonSubmission(false)
+        } 
+    })
+
+    return (
+        <div>
             <Text padding="2px" fontWeight='bold' fontSize="45px" top={0} left={0}>Bibliotheca</Text>
             <br />
         
         <Center >
         
         <Box m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center">
-        <Text marginBottom="40px" fontWeight='bold' fontSize="2em"marginRight="9px;">Sign In</Text>
+        <Text marginBottom="40px" fontWeight='bold' fontSize="2em"marginRight="9px;">Create Your Account</Text>
         <Formik
             initialValues={{ username: '', password:'' }}
             onSubmit={(values, actions) => {
                 setTimeout(() => {
+                console.log("Sample Value Data structure visual: ", values)
+                //alert(JSON.stringify(values, null, 2))
                 const rel_username = values['username']
                 const rel_password = values['password']
                 setUsername(rel_username)
                 setPassword(rel_password)
                 setbuttonSubmission(true)
-                console.log("Details are submitted")
+                console.log("States are updated")
+                
                 actions.setSubmitting(false)
                 }, 1000)
             }}
@@ -88,23 +78,23 @@ export default function signInForm() {
                         <Field name='username' validate={validateUser}>
                             {({field, form}) => (
                                 <FormControl isInvalid={form.errors.username && form.touched.username}>
-                                    <FormLabel textAlign="center" w="400px" padding="3px">Username</FormLabel>
-                                    <Input {...field} placeholder='Username'  marginBottom="2px"/>
+                                    <FormLabel textAlign="center" w="400px" padding="3px">Email</FormLabel>
+                                    <Input {...field} placeholder='Email'  marginBottom="1px"/>
                                     <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                                 </FormControl>
                             )}
                         </Field>
-                        <br /><br />
+                        <br />
                         <Field name='password' validate={validatePassword}>
                             {({field, form}) => (
                                 <FormControl isInvalid={form.errors.password && form.touched.password}>
                                     <FormLabel textAlign="center" marginBottom= "10px" padding="3px">Password</FormLabel>
                                     <Input {...field} type="password" placeholder="Password"/>
                                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
-                                </FormControl>
+                                </FormControl> 
                             )}
                         </Field>
-                        <Link href="/signup"><Text as="u"> Don't have an account </Text></Link><br /><br /><br />
+                        <br />
                         <Button
                             w="200px"
                             mt={4}
@@ -112,7 +102,7 @@ export default function signInForm() {
                             isLoading={props.isSubmitting}
                             type='Sign in'
                             >
-                            Sign In
+                            Create
                         </Button>
                     </Form>
                 )}
@@ -121,32 +111,6 @@ export default function signInForm() {
         </Box>
         </Center>
         </div>
-        )
-    }
-
-    function SuccessSignIn (props) {
-        return (
-            <div>
-                <h1>Welcome {props.username}!</h1>
-            </div>
-        )
-    }
-    useEffect(() => {
-        if (buttonSubmission === true) {
-            const result = signInFunction()
-            console.log("Username adding to Supabase :", username)
-            setbuttonSubmission(false)
-            console.log("Authentication Status after Promise", authStatus)
-        }
-
-
-    })
-
-    return (
-        <div>
-            {authStatus?<SuccessSignIn username={username} />:<HomePage />}
-        </div>
-        
 
     )
 }
