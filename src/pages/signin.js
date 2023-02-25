@@ -1,9 +1,12 @@
 
-import {Box, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText,} from '@chakra-ui/react'
+import {Box, Flex, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText,} from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import {BsLink} from 'react-icons/bs'
+import {AiOutlineFolderAdd} from 'react-icons/ai'
+
 
 export default function signInForm() {
     const supabase = createClient("https://vkulxphxyccehtzaqngk.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdWx4cGh4eWNjZWh0emFxbmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzcyMDIyNjMsImV4cCI6MTk5Mjc3ODI2M30.KiXG-sdddT_3sCP9lLGmF1iUsfkk8rK1ZebsDHae5LU")
@@ -11,12 +14,34 @@ export default function signInForm() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [authStatus, setStatus] = useState(false)
+    const [addLinkStats, setLinkStatus] = useState(false)
+    const [addFolderStatus, setFolderStatus] = useState(false)
+
+
 
     function validateUser(username) {
         let error 
         if (username === '') {
             error = "Username is undefined"
         } 
+
+        return error
+    }
+
+    function validateName(name) {
+        let error;
+        if (name === '') {
+            error = "Name of Link Cannot be Empty"
+        }
+
+        return error
+    }
+
+    function validateLink(link) {
+        let error = ''
+        if (link === '') {
+            error = 'Link Cannot be Empty'
+        }
 
         return error
     }
@@ -30,9 +55,26 @@ export default function signInForm() {
         return error
     }
 
+
     function handleError() {
         setStatus(false)
         alert(`No Email '${username}' Found! ~ Please Sign up 😎`)
+    }
+
+    function handleLinkStatus() {
+        if (addLinkStats === true) {
+            setLinkStatus(false)
+        } else if (addLinkStats === false) {
+            setLinkStatus(true)
+        }
+    }
+
+    function handleFolderStatus() {
+        if (addFolderStatus === true) {
+            setFolderStatus(false)
+        } else if (addFolderStatus === false) {
+            setFolderStatus(true)
+        }
     }
 
     async function signInFunction() {
@@ -52,11 +94,7 @@ export default function signInForm() {
                 }
                 
             }
-          )
-         
-
-          
-        
+          )  
     }
 
     function HomePage() {
@@ -88,7 +126,7 @@ export default function signInForm() {
                         <Field name='username' validate={validateUser}>
                             {({field, form}) => (
                                 <FormControl isInvalid={form.errors.username && form.touched.username}>
-                                    <FormLabel textAlign="center" w="400px" padding="3px">Username</FormLabel>
+                                    <FormLabel textAlign="center" w="400px" padding="3px">Email</FormLabel>
                                     <Input {...field} placeholder='Username'  marginBottom="2px"/>
                                     <FormErrorMessage>{form.errors.username}</FormErrorMessage>
                                 </FormControl>
@@ -98,7 +136,7 @@ export default function signInForm() {
                         <Field name='password' validate={validatePassword}>
                             {({field, form}) => (
                                 <FormControl isInvalid={form.errors.password && form.touched.password}>
-                                    <FormLabel textAlign="center" marginBottom= "10px" padding="3px">Password</FormLabel>
+                                    <FormLabel textAlign="center" marginBottom= "10px" padding="3px"> Platform Password</FormLabel>
                                     <Input {...field} type="password" placeholder="Password"/>
                                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                                 </FormControl>
@@ -127,9 +165,119 @@ export default function signInForm() {
     function SuccessSignIn (props) {
         return (
             <div>
-                <h1>Welcome {props.username}!</h1>
+                {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
+                {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
+                <Text padding="2px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
+                
+                <Center > 
+                <Box pos="fixed" bottom="7" bgColor="tomato" borderColor='tomato' color="white" display="flex" columnGap="50%" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
+                     <Button size="lg" colorScheme='gray.200' variant="ghost" leftIcon={<BsLink />} onClick={() => handleLinkStatus()}></Button>
+                     <Button size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
+                </Box>
+                </Center>
             </div>
         )
+    }
+
+    function FolderForm() {
+        return (
+        
+        
+            
+            <Box left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
+            <Formik
+            initialValues={{ name: '', link:'' }}
+            onSubmit={(values, actions) => {
+                setTimeout(() => {
+                alert(JSON.stringify(values, null, 2))
+                setFolderStatus(false)
+                console.log("Folder Details are submitted")
+                actions.setSubmitting(false)
+                }, 1000)
+            }}
+            >{(props) => (
+                <Form>
+                    <Field name='name' validate={validateName}>
+                        {({field, form}) => (
+                            <FormControl isInvalid={form.errors.name && form.touched.name}>
+                                <FormLabel>Name of Folder</FormLabel>
+                                <Input marginBottom="5px" {...field} placeholder='Name' />
+                                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Button 
+                        mt={4}
+                        colorScheme='teal'
+                        isLoading={props.isSubmitting}
+                        type='submit'>Create Folder</Button>
+                </Form>
+            )}
+
+
+            </Formik>
+            </Box>
+            
+            
+        
+        
+    )
+
+    }
+
+    function LinkForm () {
+            return (
+        
+        
+            
+            <Box left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
+            <Formik
+            initialValues={{ name: '', link:'' }}
+            onSubmit={(values, actions) => {
+                setTimeout(() => {
+                alert(JSON.stringify(values, null, 2))
+                setLinkStatus(false)
+                console.log("Link Details are submitted")
+                actions.setSubmitting(false)
+                }, 1000)
+            }}
+            >{(props) => (
+                <Form>
+                    <Field name='name' validate={validateName}>
+                        {({field, form}) => (
+                            <FormControl isInvalid={form.errors.name && form.touched.name}>
+                                <FormLabel>Name of Link</FormLabel>
+                                <Input marginBottom="5px" {...field} placeholder='Name of Link' />
+                                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Field name='link' validate={validateLink}>
+                        {({field, form}) => (
+                            <FormControl isInvalid={form.errors.link && form.touched.link}>
+                                <FormLabel>Link</FormLabel>
+                                <Input {...field} placeholder='Link' />
+                                <FormErrorMessage>{form.errors.link}</FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Button 
+                        mt={4}
+                        colorScheme='teal'
+                        isLoading={props.isSubmitting}
+                        type='submit'>Create Bookmark</Button>
+                </Form>
+            )}
+
+
+            </Formik>
+            </Box>
+            
+            
+        
+        
+    )
+
     }
     useEffect(() => {
         if (buttonSubmission === true) {
@@ -144,7 +292,8 @@ export default function signInForm() {
 
     return (
         <div>
-            {authStatus?<SuccessSignIn username={username} />:<HomePage />}
+            {authStatus?<SuccessSignIn username={username} />:<HomePage />}    
+            
         </div>
         
 
