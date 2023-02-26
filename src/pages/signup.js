@@ -38,6 +38,11 @@ export default function signInForm() {
         return data
     }
 
+    async function addUser(rel_username) {
+        const {error} = await supabase.from('data').insert({username: rel_username})
+        console.log(error)
+    }
+
     useEffect(() => {
         if (buttonSubmission === true) {
             const result = signUpFunction()
@@ -67,6 +72,8 @@ export default function signInForm() {
                 setUsername(rel_username)
                 setPassword(rel_password)
                 setbuttonSubmission(true)
+                // Adding Users
+                addUser(rel_username)
                 console.log("States are updated")
                 
                 actions.setSubmitting(false)

@@ -6,18 +6,48 @@ import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import {BsLink} from 'react-icons/bs'
 import {AiOutlineFolderAdd} from 'react-icons/ai'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+
+
 
 
 export default function signInForm() {
     const supabase = createClient("https://vkulxphxyccehtzaqngk.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdWx4cGh4eWNjZWh0emFxbmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzcyMDIyNjMsImV4cCI6MTk5Mjc3ODI2M30.KiXG-sdddT_3sCP9lLGmF1iUsfkk8rK1ZebsDHae5LU")
+    // Sample Data Set
+    const objects = [{id:'1', item:'beepboop'}, {id:'2', item:"bap"}, {id:'3',  item:"beemboom"}]
+    const folders = [{id:'1', name:"Folder1"}, {id:'2', name:'Folder2'}, {id:'3', name:'Folder3'}]
+
+
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [authStatus, setStatus] = useState(false)
     const [addLinkStats, setLinkStatus] = useState(false)
     const [addFolderStatus, setFolderStatus] = useState(false)
+    const [objectArray, updateObjectArray] = useState(objects)
+    const [folderArray, updateFolderArray] = useState(folders)
 
 
+    
+
+
+    function handleOnDragEnd(result) { 
+        if (!result.destination) return;
+        console.log(result)
+        const items = Array.from(objectArray)
+        const [reorderedItem] = items.splice(result.source.index, 1)
+        items.splice(result.destination.index, 0, reorderedItem)
+        updateObjectArray(items);
+    }
+
+    function handleOnDragEndFolder(result) {
+        if (!result.destination) return;
+        console.log("folder result", result)
+        const folder_items = Array.from(folderArray)
+        const [reorderedItem] = folder_items.splice(result.source.index, 1)
+        folder_items.splice(result.destination.index, 0, reorderedItem)
+        updateFolderArray(folder_items)
+    }
 
     function validateUser(username) {
         let error 
@@ -61,12 +91,19 @@ export default function signInForm() {
         alert(`No Email '${username}' Found! ~ Please Sign up 😎`)
     }
 
-    function handleLinkStatus() {
+    function handleLinkStatus(e) {
+        e.preventDefault()
         if (addLinkStats === true) {
+            e.preventDefault()
             setLinkStatus(false)
+            e.preventDefault()
         } else if (addLinkStats === false) {
+            e.preventDefault()
             setLinkStatus(true)
+            e.preventDefault()
         }
+        e.preventDefault()
+        
     }
 
     function handleFolderStatus() {
@@ -168,11 +205,102 @@ export default function signInForm() {
                 {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
                 {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
                 <Text padding="2px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
+                // View for bookmarks and Folders
+
                 
+                <Center>
+                <Box textAlign="center"  display="flex" w="auto" flexDirection="row">
+                <Box border="solid" padding="5px">
+                <DragDropContext onDragEnd={handleOnDragEndFolder}>
+                    <Droppable droppableId="folders">
+                        {(provided) => (
+                            
+                            <div className="folders" {...provided.droppableProps} ref={provided.innerRef}>
+                                
+                                {folderArray.map((object, index) => {
+                                    {console.log(object.id)}
+                                    return (
+                                        
+                                            <Draggable key={object.id} draggableId={object.id} index={index}>
+                                            {(provided) => (
+                                 
+                                                <Box key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" bgColor='white' h="200px" w="400px" marginBottom="20px">
+                                                    <h3>{object.name}</h3>
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                            
+                                        
+                                        
+                                       
+                                    )
+                                })}
+                                {provided.placeholder}
+
+                            </div>
+                            
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                </Box>
+                
+
+                
+                <Box border="solid" padding="5px" marginLeft="40px">
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                    <Droppable droppableId="objects">
+                        {(provided) => (
+
+                            <div className="objects" {...provided.droppableProps} ref={provided.innerRef}>
+                                
+                                {objectArray.map((object, index) => {
+                                    {console.log(object.id)}
+                                    return (
+                                        <div>
+                                            <Draggable key={object.id} draggableId={object.id} index={index}>
+                                            {(provided) => (
+                                 
+                                                <Box key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" bgColor='tomato' marginBottom="20px" h="200px" w="400px">
+                                                    <h3>{object.id}</h3>
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                            
+                                        
+                                        </div>
+                                       
+                                    )
+                                })}
+                                {provided.placeholder}
+
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                </Box>
+                
+                </Box>
+                </Center>
+                
+                
+              
+                
+
+                    
+        
+
+
+
+
+
+
+
+
+
                 <Center > 
                 <Box pos="fixed" bottom="7" bgColor="tomato" borderColor='tomato' color="white" display="flex" columnGap="50%" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
-                     <Button size="lg" colorScheme='gray.200' variant="ghost" leftIcon={<BsLink />} onClick={() => handleLinkStatus()}></Button>
-                     <Button size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
+                     <Button type='button' size="lg" colorScheme='gray.200' variant="ghost" leftIcon={<BsLink />} onClick={(e) => handleLinkStatus(e)}></Button>
+                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
                 </Box>
                 </Center>
             </div>
@@ -278,14 +406,37 @@ export default function signInForm() {
         
     )
 
+
     }
+
+    async function loadData() {
+        var data_lst = []
+        await supabase.from('data').select().then(
+            result => {
+                console.log("result from fetching data promise", result.data)
+                data_lst = result.data
+            }
+        )
+        return data_lst
+    
+        
+
+    }
+
+
     useEffect(() => {
+
         if (buttonSubmission === true) {
             const result = signInFunction()
             console.log("Username adding to Supabase :", username)
             setbuttonSubmission(false)
             console.log("Authentication Status after Promise", authStatus)
         }
+
+        const db_data = loadData()
+        console.log("Data from Supabase: ", db_data)
+
+
 
 
     })
