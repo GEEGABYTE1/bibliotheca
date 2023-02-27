@@ -16,6 +16,7 @@ export default function signInForm() {
     // Sample Data Set
     const objects = [{id:'1', item:'beepboop'}, {id:'2', item:"bap"}, {id:'3',  item:"beemboom"}]
     const folders = [{id:'1', name:"Folder1"}, {id:'2', name:'Folder2'}, {id:'3', name:'Folder3'}]
+    const colour_set = ["#d8e2dc", "#ffe5d9", '#ffcad4', '#f4acb7', '#9d8189']
 
 
     const [buttonSubmission, setbuttonSubmission] = useState(false)
@@ -26,9 +27,17 @@ export default function signInForm() {
     const [addFolderStatus, setFolderStatus] = useState(false)
     const [objectArray, updateObjectArray] = useState(objects)
     const [folderArray, updateFolderArray] = useState(folders)
+    const [data, setData] = useState([])
 
 
-    
+    function colouriterator(index) {
+        if (index > colour_set.length) {
+            index = 0 
+        } 
+
+        return index
+
+    }
 
 
     function handleOnDragEnd(result) { 
@@ -209,8 +218,9 @@ export default function signInForm() {
 
                 
                 <Center>
-                <Box textAlign="center"  display="flex" w="auto" flexDirection="row">
-                <Box border="solid" padding="5px">
+                <Box zIndex={1} textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
+                <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px">
+                <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
                     <Droppable droppableId="folders">
                         {(provided) => (
@@ -223,8 +233,8 @@ export default function signInForm() {
                                         
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
-                                 
-                                                <Box key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" bgColor='white' h="200px" w="400px" marginBottom="20px">
+                                                
+                                                <Box zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} h="70px" w="500px" marginBottom="20px">
                                                     <h3>{object.name}</h3>
                                                 </Box>
                                             )}
@@ -246,7 +256,8 @@ export default function signInForm() {
                 
 
                 
-                <Box border="solid" padding="5px" marginLeft="40px">
+                <Box zIndex={1} padding="10px" boxShadow="2xl" borderRadius="20px" marginLeft="40px">
+                <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Links </Text>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="objects">
                         {(provided) => (
@@ -260,7 +271,7 @@ export default function signInForm() {
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                  
-                                                <Box key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" bgColor='tomato' marginBottom="20px" h="200px" w="400px">
+                                                <Box zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} marginBottom="20px" h="70px" w="500px">
                                                     <h3>{object.id}</h3>
                                                 </Box>
                                             )}
@@ -283,6 +294,7 @@ export default function signInForm() {
                 </Center>
                 
                 
+                
               
                 
 
@@ -303,6 +315,7 @@ export default function signInForm() {
                      <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
                 </Box>
                 </Center>
+                
             </div>
         )
     }
@@ -312,7 +325,7 @@ export default function signInForm() {
         
         
             
-            <Box left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
+            <Box left={3} right={2} pos="fixed" m={[10, 100]} bgColor="white" boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
             <Formik
             initialValues={{ name: '', link:'' }}
             onSubmit={(values, actions) => {
@@ -358,7 +371,7 @@ export default function signInForm() {
         
         
             
-            <Box left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
+            <Box  zIndex={10} left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' bgColor="white" p='7' padding="20px" borderRadius='3xl' textAlign="center">
             <Formik
             initialValues={{ name: '', link:'' }}
             onSubmit={(values, actions) => {
@@ -370,6 +383,7 @@ export default function signInForm() {
                 }, 1000)
             }}
             >{(props) => (
+                <Box>
                 <Form>
                     <Field name='name' validate={validateName}>
                         {({field, form}) => (
@@ -395,6 +409,7 @@ export default function signInForm() {
                         isLoading={props.isSubmitting}
                         type='submit'>Create Bookmark</Button>
                 </Form>
+                </Box>
             )}
 
 
@@ -414,10 +429,16 @@ export default function signInForm() {
         await supabase.from('data').select().then(
             result => {
                 console.log("result from fetching data promise", result.data)
+
                 data_lst = result.data
+                setData(data_lst)
+                console.log("Data lst", data)
+                return data_lst
+                
+
             }
         )
-        return data_lst
+        
     
         
 
@@ -433,13 +454,16 @@ export default function signInForm() {
             console.log("Authentication Status after Promise", authStatus)
         }
 
-        const db_data = loadData()
-        console.log("Data from Supabase: ", db_data)
+        const relative_result = loadData()
+        console.log("")
+        
+        
+        
 
 
 
 
-    })
+    }, [buttonSubmission])
 
     return (
         <div>
