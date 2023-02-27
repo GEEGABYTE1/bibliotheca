@@ -2,6 +2,7 @@
 import {Box, Flex, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText,} from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import {BsLink} from 'react-icons/bs'
@@ -17,7 +18,7 @@ export default function signInForm() {
     const objects = [{id:'1', item:'beepboop'}, {id:'2', item:"bap"}, {id:'3',  item:"beemboom"}]
     const folders = [{id:'1', name:"Folder1"}, {id:'2', name:'Folder2'}, {id:'3', name:'Folder3'}]
     const colour_set = ["#d8e2dc", "#ffe5d9", '#ffcad4', '#f4acb7', '#9d8189']
-
+    const router = useRouter()
 
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
@@ -25,10 +26,45 @@ export default function signInForm() {
     const [authStatus, setStatus] = useState(false)
     const [addLinkStats, setLinkStatus] = useState(false)
     const [addFolderStatus, setFolderStatus] = useState(false)
-    const [objectArray, updateObjectArray] = useState(objects)
+    
     const [folderArray, updateFolderArray] = useState(folders)
     const [data, setData] = useState([])
+    const [initialLinkDict, setInitialLinkDict] = useState({})
+    const [linkDisplayArray, setLinkDisplayArray] = useState([])
+    
+    const handleTitleClick = (e, href) => {
+        e.preventDefault()
+        document.location.href = 'https://' + href
 
+    }
+
+    function conversionOfData() {
+        const counter = Object.keys(initialLinkDict).length
+        var id_count = 1
+        var current_array = []
+        if (counter > 0) {
+            
+            for (let i=0; i <= counter; i++) {
+                const current_nameLink = Object.keys(initialLinkDict)[i]
+                if (current_nameLink === undefined) {
+                    continue
+                } else {
+                    const current_link = initialLinkDict[current_nameLink]
+                    const id_string = (id_count).toString()
+                    const idp_dictionary = {'id': id_string, 'name':current_nameLink, 'link': current_link}
+                    current_array.push(idp_dictionary)
+
+                }
+                id_count += 1
+                
+
+
+            }
+        }
+        console.log("Newly Formatted Array for Display", current_array)
+        setLinkDisplayArray(current_array)
+
+    }
 
     function colouriterator(index) {
         if (index > colour_set.length) {
@@ -43,10 +79,10 @@ export default function signInForm() {
     function handleOnDragEnd(result) { 
         if (!result.destination) return;
         console.log(result)
-        const items = Array.from(objectArray)
+        const items = Array.from(linkDisplayArray)
         const [reorderedItem] = items.splice(result.source.index, 1)
         items.splice(result.destination.index, 0, reorderedItem)
-        updateObjectArray(items);
+        setLinkDisplayArray(items);
     }
 
     function handleOnDragEndFolder(result) {
@@ -264,15 +300,15 @@ export default function signInForm() {
 
                             <div className="objects" {...provided.droppableProps} ref={provided.innerRef}>
                                 
-                                {objectArray.map((object, index) => {
+                                {linkDisplayArray.map((object, index) => {
                                     {console.log(object.id)}
                                     return (
                                         <div>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                  
-                                                <Box zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} marginBottom="20px" h="70px" w="500px">
-                                                    <h3>{object.id}</h3>
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
+                                                    <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
                                                 </Box>
                                             )}
                                         </Draggable>
@@ -366,6 +402,29 @@ export default function signInForm() {
 
     }
 
+    function fetchCurrentUserData() {
+        for (let i =0; i < data.length; i++) {
+            const user_dict = data[i]
+            const relative_username = user_dict['username']
+            console.log("User Dictionary", user_dict)
+            
+            if (relative_username === username) {
+                console.log("hold true")
+                return user_dict
+            } else{
+                continue
+            }
+            
+        }
+
+        return {}
+    }
+
+    async function updateLinkJson(current_user_id, json_dict, userData) {
+        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], folders:userData['folders'], links:json_dict}).eq('id', current_user_id)
+        console.log("Possible Error from Supabase", error)
+    }
+
     function LinkForm () {
             return (
         
@@ -377,10 +436,39 @@ export default function signInForm() {
             onSubmit={(values, actions) => {
                 setTimeout(() => {
                 alert(JSON.stringify(values, null, 2))
-                setLinkStatus(false)
+                
+
+                // Link DB Update
+                const userData = fetchCurrentUserData()
+                console.log("Updated User Dictionary ", userData)
+                const current_link_json = userData['links']
+                console.log("Current JSON format for links", current_link_json)
+                const current_user_id = userData['id']
+                const link_name = `${values['name']}`
+                const link_string = values['link']
+
+
+                var link_dict;
+                if (current_link_json === null || current_link_json === undefined) {
+                    link_dict = {link_name: link_string}
+                } else {
+                    link_dict = JSON.parse(current_link_json)
+                    link_dict[`${link_name}`] = link_string
+                }
+
+            
+
+                const json_converted_dict = JSON.stringify(link_dict)
+                console.log("Converted JSON dictionary with updated link", json_converted_dict)
+                updateLinkJson(current_user_id, json_converted_dict, userData)
+ 
+
+
                 console.log("Link Details are submitted")
                 actions.setSubmitting(false)
                 }, 1000)
+                setLinkStatus(false)
+                
             }}
             >{(props) => (
                 <Box>
@@ -432,7 +520,9 @@ export default function signInForm() {
 
                 data_lst = result.data
                 setData(data_lst)
+            
                 console.log("Data lst", data)
+                
                 return data_lst
                 
 
@@ -455,7 +545,18 @@ export default function signInForm() {
         }
 
         const relative_result = loadData()
-        console.log("")
+        console.log("Data lst from UseEffect", data)
+        if (data.length > 0) {
+            const rel_user = fetchCurrentUserData()
+            console.log("initial rel_user",  rel_user)
+            const json_link = rel_user['links']
+            const json_link_dict = JSON.parse(json_link)
+            setInitialLinkDict(json_link_dict)
+            conversionOfData()
+
+        }
+        
+
         
         
         
