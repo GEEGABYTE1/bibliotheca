@@ -363,11 +363,34 @@ export default function signInForm() {
             
             <Box left={3} right={2} pos="fixed" m={[10, 100]} bgColor="white" boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center" zIndex={10}>
             <Formik
-            initialValues={{ name: '', link:'' }}
+            initialValues={{ name: ''}}
             onSubmit={(values, actions) => {
                 setTimeout(() => {
                 alert(JSON.stringify(values, null, 2))
                 setFolderStatus(false)
+                // DB Update
+                const userData = fetchCurrentUserData()
+                console.log("Updated User Dictionary ", userData)
+                const current_folder_json = userData['folders']
+                console.log("Current JSON format for folders", current_folder_json)
+                const current_user_id = userData['id']
+                const folder_name = `${values['name']}`
+                var folder_dict;
+                if (current_folder_json === null || current_folder_json === undefined) {
+                    folder_dict = {folder_name:JSON.stringify({})}
+
+
+                } else {
+                    // Change Logic here, the returned data type is an array
+                    folder_dict = JSON.parse(current_folder_json)
+                    folder_dict[folder_name] = JSON.stringify({})
+
+                }
+                const json_converted_dict = JSON.stringify(folder_dict)
+                console.log("Converted JSON dictionary with updated link", json_converted_dict)
+            
+
+                updateFolderJson(current_user_id, json_converted_dict, userData)
                 console.log("Folder Details are submitted")
                 actions.setSubmitting(false)
                 }, 1000)
@@ -425,6 +448,11 @@ export default function signInForm() {
         console.log("Possible Error from Supabase", error)
     }
 
+    async function updateFolderJson(current_user_id, json_dict, userData) {
+        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], links:userData['links'], folders:[json_dict]}).eq('id', current_user_id)
+        console.log("Possible error from Supabase", error)
+    }
+
     function LinkForm () {
             return (
         
@@ -461,7 +489,7 @@ export default function signInForm() {
                 const json_converted_dict = JSON.stringify(link_dict)
                 console.log("Converted JSON dictionary with updated link", json_converted_dict)
                 updateLinkJson(current_user_id, json_converted_dict, userData)
- 
+                
 
 
                 console.log("Link Details are submitted")
