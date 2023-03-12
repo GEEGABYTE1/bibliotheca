@@ -1,5 +1,5 @@
 
-import {Box, Flex, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText,} from '@chakra-ui/react'
+import {Box, Flex, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText, color,} from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -27,15 +27,44 @@ export default function signInForm() {
     const [addLinkStats, setLinkStatus] = useState(false)
     const [addFolderStatus, setFolderStatus] = useState(false)
     
+    
     const [folderArray, updateFolderArray] = useState(folders)
     const [data, setData] = useState([])
     const [initialLinkDict, setInitialLinkDict] = useState({})
+    const [initialArrayFolder, setInitialFolderArray] = useState([])
+
     const [linkDisplayArray, setLinkDisplayArray] = useState([])
+    const [folderDisplayArray, setFolderDisplayArray] = useState([])
+
     
     const handleTitleClick = (e, href) => {
         e.preventDefault()
         document.location.href = 'https://' + href
 
+    }
+
+    function conversionOfFolderData() {
+        var folder_array_dict = []
+        const userDataFolder = fetchCurrentUserData()
+        console.log("Updated User Dictionary ", userDataFolder)
+        const folder_array_db = userDataFolder['folders']
+        for (let i=0; i <= folder_array_db.length; i++) {
+            var current_folder_json_string = folder_array_db[i]
+            if (current_folder_json_string === undefined) {
+                continue
+            } else {
+                var converted_json_string_dict = JSON.parse(current_folder_json_string)
+                console.log("Converted JSON string dict from Supabase: ", converted_json_string_dict)
+                folder_array_dict.push(converted_json_string_dict)
+
+            }
+
+
+        }
+
+        console.log("Formatted Array for Folder Display: ", folder_array_dict)
+        setFolderDisplayArray(folder_array_dict)
+        
     }
 
     function conversionOfData() {
@@ -67,12 +96,16 @@ export default function signInForm() {
     }
 
     function colouriterator(index) {
-        if (index > colour_set.length) {
-            index = 0 
+        console.log("Setting Index")
+        
+        if (index >= colour_set.length) {
+            var index = 0 
+            
+            
         } 
-
         return index
 
+        
     }
 
 
@@ -88,10 +121,10 @@ export default function signInForm() {
     function handleOnDragEndFolder(result) {
         if (!result.destination) return;
         console.log("folder result", result)
-        const folder_items = Array.from(folderArray)
+        const folder_items = Array.from(folderDisplayArray)
         const [reorderedItem] = folder_items.splice(result.source.index, 1)
         folder_items.splice(result.destination.index, 0, reorderedItem)
-        updateFolderArray(folder_items)
+        setFolderDisplayArray(folder_items)
     }
 
     function validateUser(username) {
@@ -255,7 +288,7 @@ export default function signInForm() {
                 
                 <Center>
                 <Box zIndex={1} textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
-                <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px">
+                <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px" overflow="scroll">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
                     <Droppable droppableId="folders">
@@ -263,15 +296,16 @@ export default function signInForm() {
                             
                             <div className="folders" {...provided.droppableProps} ref={provided.innerRef}>
                                 
-                                {folderArray.map((object, index) => {
-                                    {console.log(object.id)}
+                                {folderDisplayArray.map((object, index) => {
+                                    {console.log(Object.keys(object)[0])}
+                                    
                                     return (
                                         
-                                            <Draggable key={object.id} draggableId={object.id} index={index}>
+                                            <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
-                                                <Box zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} h="70px" w="500px" marginBottom="20px">
-                                                    <h3>{object.name}</h3>
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                    <h3>{Object.keys(object)[0]}</h3>
                                                 </Box>
                                             )}
                                         </Draggable>
@@ -346,7 +380,7 @@ export default function signInForm() {
 
 
                 <Center > 
-                <Box pos="fixed" bottom="7" bgColor="tomato" borderColor='tomato' color="white" display="flex" columnGap="50%" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
+                <Box zIndex={4} pos="fixed" bottom="7" bgColor="tomato" borderColor='tomato' color="white" display="flex" columnGap="50%" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
                      <Button type='button' size="lg" colorScheme='gray.200' variant="ghost" leftIcon={<BsLink />} onClick={(e) => handleLinkStatus(e)}></Button>
                      <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
                 </Box>
@@ -455,6 +489,8 @@ export default function signInForm() {
     }
 
     function fetchCurrentUserData() {
+        const updating_data = loadData()
+        console.log("*Updating Data under fetchCurrentUserData() function*")
         for (let i =0; i < data.length; i++) {
             const user_dict = data[i]
             const relative_username = user_dict['username']
@@ -591,7 +627,24 @@ export default function signInForm() {
 
     }
 
-
+    function folderArrayFormulation(array_json) {
+        
+        var new_array = []
+        
+        for (let i=0; i <= array_json.length; i++) {
+            const current_json_string = array_json[i]
+            console.log("Array JSon", current_json_string)
+            if (current_json_string === undefined) {
+                continue
+            } else {
+                const converted_current_json_string = JSON.parse(current_json_string)
+                
+                new_array.push(converted_current_json_string)
+            }
+         
+        }
+        return new_array
+    }
     useEffect(() => {
 
         if (buttonSubmission === true) {
@@ -609,7 +662,15 @@ export default function signInForm() {
             const json_link = rel_user['links']
             const json_link_dict = JSON.parse(json_link)
             setInitialLinkDict(json_link_dict)
+            const json_folder = rel_user['folders']
+            console.log("Json Folder JSON: ", json_folder)
+            const initial_folder_array = folderArrayFormulation(json_folder)
+            console.log("Initial Folder Array: ", initial_folder_array)
+
+
+
             conversionOfData()
+            conversionOfFolderData()
 
         }
         
