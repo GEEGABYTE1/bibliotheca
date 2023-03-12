@@ -375,25 +375,54 @@ export default function signInForm() {
                 console.log("Current JSON format for folders", current_folder_json)
                 const current_user_id = userData['id']
                 const folder_name = `${values['name']}`
-                var folder_dict;
-                if (current_folder_json === null || current_folder_json === undefined) {
-                    folder_dict = {folder_name:JSON.stringify({})}
+                var folder_dict = {};
+                if (current_folder_json === null || current_folder_json === undefined || current_folder_json.length === 0) {
+                    folder_dict[folder_name] = JSON.stringify({})
+                    const initial_array = [JSON.stringify(folder_dict)]
+                    updateFolderJson(current_user_id, initial_array, userData)
+
+
 
 
                 } else {
                     // Change Logic here, the returned data type is an array
-                    folder_dict = JSON.parse(current_folder_json)
-                    folder_dict[folder_name] = JSON.stringify({})
+                    var checker = false
+                    for (let i =0; i <= current_folder_json.length; i++) {
+                        const current_json = current_folder_json[i]
+                        console.log(`Array Json at ${i}: ${current_json}`)
+                        if (current_json === undefined) {
+                            continue
+                        } else {
+                            var converted_json = JSON.parse(current_json)
+                            var converted_json_name = Object.keys(converted_json)[0]
+                            if (converted_json_name === folder_name) {
+        
+                                checker = true
+                        
+                            } 
+
+                        }
+                        
+
 
                 }
-                const json_converted_dict = JSON.stringify(folder_dict)
-                console.log("Converted JSON dictionary with updated link", json_converted_dict)
-            
+                if (checker === true) {
+                    console.log("Error - Folder has already been made")
 
-                updateFolderJson(current_user_id, json_converted_dict, userData)
+                } else {
+                    const temp_dict = {}
+                    temp_dict[folder_name] = JSON.stringify({})
+                    var folder_dict_json = JSON.stringify(temp_dict)
+                    current_folder_json.push(folder_dict_json)
+                    console.log("Updating Folder JSON")
+                    updateFolderJson(current_user_id, current_folder_json, userData)
+                    
+                }
+                
                 console.log("Folder Details are submitted")
                 actions.setSubmitting(false)
-                }, 1000)
+                
+                }}, 1000)
             }}
             >{(props) => (
                 <Form>
@@ -448,8 +477,8 @@ export default function signInForm() {
         console.log("Possible Error from Supabase", error)
     }
 
-    async function updateFolderJson(current_user_id, json_dict, userData) {
-        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], links:userData['links'], folders:[json_dict]}).eq('id', current_user_id)
+    async function updateFolderJson(current_user_id, json_array, userData) {
+        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], links:userData['links'], folders:json_array}).eq('id', current_user_id)
         console.log("Possible error from Supabase", error)
     }
 
