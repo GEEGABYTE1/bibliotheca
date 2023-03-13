@@ -26,6 +26,9 @@ export default function signInForm() {
     const [authStatus, setStatus] = useState(false)
     const [addLinkStats, setLinkStatus] = useState(false)
     const [addFolderStatus, setFolderStatus] = useState(false)
+    const [displayFolder, setDisplayFolder] = useState(false)
+    const [folderIndex, setFolderIndex] = useState()
+    const [folderName, setFolderName] = useState()
     
     
     const [folderArray, updateFolderArray] = useState(folders)
@@ -41,6 +44,86 @@ export default function signInForm() {
         e.preventDefault()
         document.location.href = 'https://' + href
 
+    }
+
+    function FolderDisplay(props) {
+
+        return (
+        
+            <Box  zIndex={10} left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' bgColor="white" p='7' padding="20px" borderRadius='3xl' textAlign="center">
+            <h3>{props.index}</h3>
+            <h3>{props.folderName}</h3>
+            <Formik
+            initialValues={{ name: '', link:'' }}
+            onSubmit={(values, actions) => {
+                setTimeout(() => {
+                alert(JSON.stringify(values, null, 2))
+                
+
+                // Link DB Update
+                const userData = fetchCurrentUserData()
+                console.log("Updated User Dictionary ", userData)
+                const current_link_json = userData['links']
+                console.log("Current JSON format for links", current_link_json)
+                const current_user_id = userData['id']
+                const link_name = `${values['name']}`
+                const link_string = values['link']
+
+
+
+                console.log("Link Details are submitted")
+                actions.setSubmitting(false)
+                }, 1000)
+                setLinkStatus(false)
+                
+            }}
+            >{(props) => (
+                <Box>
+                <Form>
+                    <Field name='name' validate={validateName}>
+                        {({field, form}) => (
+                            <FormControl isInvalid={form.errors.name && form.touched.name}>
+                                <FormLabel>Name of Link</FormLabel>
+                                <Input marginBottom="5px" {...field} placeholder='Name of Link' />
+                                <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Field name='link' validate={validateLink}>
+                        {({field, form}) => (
+                            <FormControl isInvalid={form.errors.link && form.touched.link}>
+                                <FormLabel>Link</FormLabel>
+                                <Input {...field} placeholder='Link' />
+                                <FormErrorMessage>{form.errors.link}</FormErrorMessage>
+                            </FormControl>
+                        )}
+                    </Field>
+                    <Button 
+                        mt={4}
+                        colorScheme='teal'
+                        isLoading={props.isSubmitting}
+                        type='submit'>Create Bookmark</Button>
+                </Form>
+                </Box>
+            )}
+
+
+            </Formik>
+            </Box>
+            
+            
+        
+        
+    )
+
+    }
+
+    function openFolder(e, index, folderName) {
+        e.preventDefault()
+        console.log("Index of Folder Open: ", index)
+        setFolderIndex(index)
+        setFolderName(folderName)
+        setDisplayFolder(true)
     }
 
     function conversionOfFolderData() {
@@ -282,6 +365,7 @@ export default function signInForm() {
             <div>
                 {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
                 {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
+                {displayFolder?<FolderDisplay index={folderIndex} folderName={folderName}/>:console.log("Folder display is dismissed")}
                 <Text padding="2px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
                 // View for bookmarks and Folders
 
@@ -305,7 +389,7 @@ export default function signInForm() {
                                             {(provided) => (
                                                 
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
-                                                    <h3>{Object.keys(object)[0]}</h3>
+                                                    <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
                                                 </Box>
                                             )}
                                         </Draggable>
