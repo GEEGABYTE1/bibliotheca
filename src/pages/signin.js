@@ -990,12 +990,12 @@ export default function SignInForm() {
     }
 
     async function updateLinkJson(current_user_id, json_dict, userData) {
-        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], folders:userData['folders'], links:json_dict}).eq('id', current_user_id)
+        const {error} = await supabase.from('data').update({'id':current_user_id, 'username':userData['username'], 'folders':userData['folders'], 'links':json_dict}).eq('id', current_user_id)
         console.log("Possible Error from Supabase", error)
     }
 
     async function updateFolderJson(current_user_id, json_array, userData) {
-        const {error} = await supabase.from('data').update({id:current_user_id, username:userData['username'], links:userData['links'], folders:json_array}).eq('id', current_user_id)
+        const {error} = await supabase.from('data').update({'id':current_user_id, 'username':userData['username'], 'links':userData['links'], 'folders':json_array}).eq('id', current_user_id)
         console.log("Possible error from Supabase", error)
     }
 
