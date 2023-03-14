@@ -29,6 +29,7 @@ export default function signInForm() {
     const [displayFolder, setDisplayFolder] = useState(false)
     const [folderIndex, setFolderIndex] = useState()
     const [folderName, setFolderName] = useState()
+    const [folder, setFolder] = useState([])
     
     
     const [folderArray, updateFolderArray] = useState(folders)
@@ -161,6 +162,43 @@ export default function signInForm() {
         setFolderIndex(index)
         setFolderName(folderName)
         setDisplayFolder(true)
+
+        // fetching current folder 
+        const initialUserData = fetchCurrentUserData()
+        var array = []
+        const folders_array = initialUserData['folders']
+        for (let i=0; i <= folders_array.length; i++) {
+            var current_folder = folders_array[i]
+            if (current_folder === undefined) {
+                continue
+            }
+            var current_dict = JSON.parse(current_folder)
+            var current_key = Object.keys(current_dict)[0]
+            if (current_key === folderName) {
+                var nested_dict = current_dict[current_key]
+                if (nested_dict === '{}') {
+                    var current_nested_dictionary = JSON.parse(nested_dict)
+                    console.log("Current Nested Dictionary that will be Set to UseState: ", current_nested_dictionary)
+                    setFolder([])
+                } else {
+                    var current_nested_dictionary = nested_dict
+                    console.log("Current Nested Dictionary that will be Set to UseState: ", current_nested_dictionary)
+                    var keys = Object.keys(current_nested_dictionary)
+                    for (let key_index=0; key_index <= keys.length; key_index++) {
+                        var relative_value = current_nested_dictionary[keys[key_index]]
+                        console.log(`Relative value for Key: ${keys[key_index]} --> ${relative_value}`)
+                        var d = {}
+                        d[keys[key_index]] = relative_value
+                        array.push(d)
+
+                    }
+                    setFolder(array)
+                    console.log("Array that has been set for UseState: ", array)
+                    
+                }
+            }
+        }
+
     }
 
     function conversionOfFolderData() {
