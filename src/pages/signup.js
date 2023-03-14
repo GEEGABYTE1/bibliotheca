@@ -74,7 +74,7 @@ export default function SignInForm() {
             onSubmit={(values, actions) => {
                 setTimeout(() => {
                 console.log("Sample Value Data structure visual: ", values)
-                //alert(JSON.stringify(values, null, 2))
+                alert("Account Created! Check your Email to Verify your Account 🥳")
                 const rel_username = values['username']
                 const rel_password = values['password']
                 setUsername(rel_username)
