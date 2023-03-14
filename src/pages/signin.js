@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import {BsLink} from 'react-icons/bs'
-import {AiOutlineFolderAdd} from 'react-icons/ai'
+import {AiOutlineFolderAdd, AiFillDelete} from 'react-icons/ai'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 
@@ -40,7 +40,41 @@ export default function signInForm() {
     const [linkDisplayArray, setLinkDisplayArray] = useState([])
     const [folderDisplayArray, setFolderDisplayArray] = useState([])
 
-    
+
+
+    // *****************************************************
+
+    // Deleting Data Section
+    function deleteLink(index) {
+        console.log(`Array at Index: ${index} - ${linkDisplayArray[index]} is deleting`)
+        var updated_link_dict = {}
+        for (let i=0; i <= linkDisplayArray.length;i++) {
+            var current_obj_link = linkDisplayArray[i]
+            console.log("Current Object Link: ", current_obj_link)
+            if (current_obj_link === undefined) {
+                continue
+            }
+            if (i === index) {
+                continue
+            } else {
+                var rel_key_name = current_obj_link['name']
+                const rel_key_link = current_obj_link['link']
+
+                
+                updated_link_dict[rel_key_name] = rel_key_link
+            }
+        }
+        const userData = fetchCurrentUserData()
+        const current_user_id = userData['id']
+
+        const updated_link_json = JSON.stringify(updated_link_dict)
+        updateLinkJson(current_user_id, updated_link_json, userData)
+        console.log("Deleting process complete")
+
+
+    }
+
+    // *****************************************************
     const handleTitleClick = (e, href) => {
         e.preventDefault()
         document.location.href = 'https://' + href
@@ -555,6 +589,8 @@ export default function signInForm() {
                                  
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
                                                     <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
+                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
+                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
                                                 </Box>
                                             )}
                                         </Draggable>
