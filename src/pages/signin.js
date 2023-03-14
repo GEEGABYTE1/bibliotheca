@@ -32,7 +32,7 @@ export default function SignInForm() {
     const [folder, setFolder] = useState([])
     
     
-    const [folderArray, updateFolderArray] = useState(folders)
+    
     const [data, setData] = useState([])
     const [initialLinkDict, setInitialLinkDict] = useState({})
     const [initialArrayFolder, setInitialFolderArray] = useState([])
