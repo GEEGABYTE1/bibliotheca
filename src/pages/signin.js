@@ -1,13 +1,14 @@
 
-import {Box, Flex, Spacer, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText, color,} from '@chakra-ui/react'
+import {Box, Image, Flex, Spacer, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText, color,} from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import {BsLink} from 'react-icons/bs'
-import {AiOutlineFolderAdd, AiFillDelete} from 'react-icons/ai'
+import {AiOutlineFolderAdd, AiFillDelete, AiOutlineHome} from 'react-icons/ai'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+
 
 
 
@@ -581,13 +582,17 @@ export default function signInForm() {
 
     function HomePage() {
         return (
+        <Box height="900px" width="auto" backgroundImage="url('/images/Wallpaper2.png')" backgroundPosition="center" backgroundSize="cover"
+  backgroundRepeat="no-repeat">
             <div>
-            <Text padding="2px" fontWeight='bold' fontSize="45px" top={0} left={0}>Bibliotheca</Text>
+            <Link href="/"><Text paddingLeft="40px" padding="10px" fontWeight='bold' fontSize="45px" top={0} left={0}>Bibliotheca</Text></Link>
+
             <br />
         
         <Center >
         
         <Box m={[10, 100]} boxShadow="2xl" rounded='md' p='7' padding="20px" borderRadius='3xl' textAlign="center">
+        
         <Text marginBottom="40px" fontWeight='bold' fontSize="2em"marginRight="9px;">Sign In</Text>
         <Formik
             initialValues={{ username: '', password:'' }}
@@ -640,7 +645,10 @@ export default function signInForm() {
         </Formik>
         </Box>
         </Center>
+        
         </div>
+        
+        </Box>
         )
     }
 
@@ -651,16 +659,18 @@ export default function signInForm() {
                 {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
                 {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
                 {displayFolder?<FolderDisplay index={folderIndex} folderName={folderName}/>:console.log("Folder display is dismissed")}
-                <Text padding="2px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
-                // View for bookmarks and Folders
+                <Box height="1000px" width="auto" backgroundImage="url('/images/Wallpaper5.png')" backgroundPosition="center" backgroundSize="cover"
+  backgroundRepeat="no-repeat">
+                <Text padding="10px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
+                
 
                 
                 <Center>
                 
                     
-                <Box zIndex={1} textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
+                <Box zIndex={1} marginTop="5%"textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
 
-                    {folderDisplayArray.length <= 5?<Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px">
+                    {folderDisplayArray.length <= 5?<Box zIndex={1} boxShadow="2xl" w="600px" borderRadius="20px" padding="10px" h="400px">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
@@ -677,12 +687,13 @@ export default function signInForm() {
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
-                                                
+                                                <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
                                                     
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
                                                     
                                                 </Box>
+                                                </Center>
                                             )}
                                         </Draggable>
                                             
@@ -698,7 +709,7 @@ export default function signInForm() {
                         )}
                     </Droppable>
                 </DragDropContext>
-                </Box>: <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px" overflowX="hidden" overflowY="scroll">
+                </Box>: <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" w="600px" h="400px" overflowX="hidden" overflowY="scroll">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
                     <Droppable droppableId="folders">
@@ -714,12 +725,13 @@ export default function signInForm() {
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
-                                                
+                                                <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
                                                     
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
                                                     
                                                 </Box>
+                                                </Center>
                                             )}
                                         </Draggable>
                                             
@@ -739,7 +751,7 @@ export default function signInForm() {
                 
                 
 
-                {linkDisplayArray.length <= 3  ? <Box zIndex={1} padding="10px" h="400px" boxShadow="2xl" borderRadius="20px" marginLeft="40px">
+                {linkDisplayArray.length <= 3  ? <Box zIndex={1} padding="10px" h="400px" w="600px"boxShadow="2xl" borderRadius="20px" marginLeft="40px">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Links </Text>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="objects">
@@ -753,12 +765,13 @@ export default function signInForm() {
                                         <div>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
-                                 
+                                                <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
                                                     <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
                                                 </Box>
+                                                </Center>
                                             )}
                                         </Draggable>
                                             
@@ -773,7 +786,7 @@ export default function signInForm() {
                         )}
                     </Droppable>
                 </DragDropContext>
-                </Box>: <Box zIndex={1} padding="10px" boxShadow="2xl" borderRadius="20px" h="400px" marginLeft="40px" overflowY="scroll" overflowX="hidden">
+                </Box>: <Box zIndex={1} padding="10px" boxShadow="2xl" borderRadius="20px" w="600px" h="400px" marginLeft="40px" overflowY="scroll" overflowX="hidden">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Links </Text>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="objects">
@@ -787,12 +800,13 @@ export default function signInForm() {
                                         <div>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
-                                 
+                                                <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
                                                     <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
                                                 </Box>
+                                                </Center>
                                             )}
                                         </Draggable>
                                             
@@ -835,7 +849,7 @@ export default function signInForm() {
                      <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
                 </Box>
                 </Center>
-                
+                </Box>
             </div>
         )
     }

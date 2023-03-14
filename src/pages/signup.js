@@ -53,8 +53,10 @@ export default function signInForm() {
     })
 
     return (
+        <Box height="900px" width="auto" backgroundImage="url('/images/Wallpaper2.png')" backgroundPosition="center" backgroundSize="cover"
+  backgroundRepeat="no-repeat">
         <div>
-            <Text padding="2px" fontWeight='bold' fontSize="45px" top={0} left={0}>Bibliotheca</Text>
+            <Link href="/"><Text padding="2px" fontWeight='bold' fontSize="45px" top={0} left={0}>Bibliotheca</Text></Link>
             <br />
         
         <Center >
@@ -118,6 +120,7 @@ export default function signInForm() {
         </Box>
         </Center>
         </div>
+        </Box>
 
     )
 }
