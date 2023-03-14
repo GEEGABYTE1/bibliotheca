@@ -1010,7 +1010,7 @@ export default function SignInForm() {
             initialValues={{ name: '', link:'' }}
             onSubmit={(values, actions) => {
                 setTimeout(() => {
-                alert(`Link '$apos;'${values['name']}'$apos;'Successfully Added 🎉`)
+                alert(`Link '${values['name']}' Successfully Added 🎉`)
                 
 
                 // Link DB Update
@@ -1177,7 +1177,8 @@ export default function SignInForm() {
             <Head>
                 <title>Bibliotheca</title>
             </Head>
-            {authStatus?<SuccessSignIn username={username} />:<HomePage />}    
+            {authStatus?<SuccessSignIn username={username} />:<HomePage />}  
+              
             
         </div>
         

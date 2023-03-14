@@ -1,4 +1,5 @@
 import Head from 'next/head'
+ 
 
 import { Inter } from '@next/font/google'
 
@@ -17,6 +18,13 @@ export default function Home() {
         <title>Bibliotheca</title>
             
       </Head>
+    <Center>
+    <Box pos='absolute' bgColor='transparent' fontWeight='bold' bottom={0}>
+
+      <Text> By Jaival Patel 🧠 (@patjaival)</Text>
+      
+      </Box>
+    </Center>
     
     <Box height="900px" width="auto" backgroundImage="url('/images/Wallpaper3.png')" backgroundPosition="center" backgroundSize="cover"
   backgroundRepeat="no-repeat">
