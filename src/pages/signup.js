@@ -8,7 +8,7 @@ import Head from 'next/head'
 
 export default function SignInForm() {
     
-    const supabase = createClient(process.env.DB_URL, process.env.DB_KEY)
+    const supabase = createClient(process.env.NEXT_PUBLIC_DB_URL, process.env.NEXT_PUBLIC_DB_KEY)
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')

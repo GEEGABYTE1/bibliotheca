@@ -15,7 +15,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 
 export default function SignInForm() {
-    const supabase = createClient(process.env.DB_URL, process.env.DB_KEY)
+    const supabase = createClient(process.env.NEXT_PUBLIC_DB_URL, process.env.NEXT_PUBLIC_DB_KEY)
     // Sample Data Set
     
     const colour_set = ["#d8e2dc", "#ffe5d9", '#ffcad4', '#f4acb7', '#9d8189']
