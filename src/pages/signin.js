@@ -252,7 +252,7 @@ export default function signInForm() {
                 
             }}
             >{(props) => (
-                <Box marginLeft='100px' w="1000px">
+                <Box marginLeft='100px' w="800px">
                 <Form>
                     <Field name='name' validate={validateName}>
                         {({field, form}) => (
@@ -284,7 +284,7 @@ export default function signInForm() {
 
             </Formik>
             <Spacer />
-            {folder.length > 0?<Box marginLeft= "80px" marginRight="100px" padding="20px" w="auto" h="auto" overflow-y="scroll">
+            {folder.length > 0?<Box marginLeft= "80px" marginRight="100px" padding="20px" w="auto" h="200px" overflowX="hidden" overflowY="scroll">
                 <h1>Links</h1>
                 <DragDropContext onDragEnd={handleOnDragEndFolderLink}>
                     <Droppable droppableId="folders">
@@ -296,7 +296,7 @@ export default function signInForm() {
                                     {console.log(Object.keys(object)[0])}
                                     
                                     return (
-                                        
+                                            
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
@@ -419,10 +419,13 @@ export default function signInForm() {
     }
 
     function conversionOfData() {
-        const counter = Object.keys(initialLinkDict).length
-        var id_count = 1
-        var current_array = []
-        if (counter > 0) {
+        if (initialLinkDict === undefined || initialLinkDict === null) {
+            var current_array = []
+        } else {
+            const counter = Object.keys(initialLinkDict).length
+            var id_count = 1
+            var current_array = []
+            if (counter > 0) {
             
             for (let i=0; i <= counter; i++) {
                 const current_nameLink = Object.keys(initialLinkDict)[i]
@@ -441,6 +444,9 @@ export default function signInForm() {
 
             }
         }
+
+        }
+        
         console.log("Newly Formatted Array for Display", current_array)
         setLinkDisplayArray(current_array)
 
@@ -640,6 +646,7 @@ export default function signInForm() {
 
     function SuccessSignIn (props) {
         return (
+            
             <div>
                 {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
                 {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
@@ -649,8 +656,49 @@ export default function signInForm() {
 
                 
                 <Center>
+                
+                    
                 <Box zIndex={1} textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
-                <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px" overflow="scroll">
+
+                    {folderDisplayArray.length <= 5?<Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px">
+                <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
+                
+                <DragDropContext onDragEnd={handleOnDragEndFolder}>
+                    <Droppable droppableId="folders">
+                        {(provided) => (
+                            
+                            <div className="folders" {...provided.droppableProps} ref={provided.innerRef}>
+                                
+                                {folderDisplayArray.map((object, index) => {
+                                    {console.log(Object.keys(object)[0])}
+                                    
+                                    return (
+                                        
+                                            <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
+                                            {(provided) => (
+                                                
+                                                
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                    
+                                                    <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
+                                                    
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                            
+                                        
+                                        
+                                       
+                                    )
+                                })}
+                                {provided.placeholder}
+
+                            </div>
+                            
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                </Box>: <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" h="400px" overflowX="hidden" overflowY="scroll">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
                     <Droppable droppableId="folders">
@@ -687,11 +735,11 @@ export default function signInForm() {
                         )}
                     </Droppable>
                 </DragDropContext>
-                </Box>
+                </Box>}
+                
                 
 
-                
-                <Box zIndex={1} padding="10px" boxShadow="2xl" borderRadius="20px" marginLeft="40px">
+                {linkDisplayArray.length <= 3  ? <Box zIndex={1} padding="10px" h="400px" boxShadow="2xl" borderRadius="20px" marginLeft="40px">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Links </Text>
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <Droppable droppableId="objects">
@@ -725,7 +773,42 @@ export default function signInForm() {
                         )}
                     </Droppable>
                 </DragDropContext>
-                </Box>
+                </Box>: <Box zIndex={1} padding="10px" boxShadow="2xl" borderRadius="20px" h="400px" marginLeft="40px" overflowY="scroll" overflowX="hidden">
+                <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Links </Text>
+                <DragDropContext onDragEnd={handleOnDragEnd}>
+                    <Droppable droppableId="objects">
+                        {(provided) => (
+
+                            <div className="objects" {...provided.droppableProps} ref={provided.innerRef}>
+                                
+                                {linkDisplayArray.map((object, index) => {
+                                    {console.log(object.id)}
+                                    return (
+                                        <div>
+                                            <Draggable key={object.id} draggableId={object.id} index={index}>
+                                            {(provided) => (
+                                 
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
+                                                    <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
+                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
+                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                            
+                                        
+                                        </div>
+                                       
+                                    )
+                                })}
+                                {provided.placeholder}
+
+                            </div>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+                </Box>}
+                
                 
                 </Box>
                 </Center>
