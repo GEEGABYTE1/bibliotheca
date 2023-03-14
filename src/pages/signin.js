@@ -13,13 +13,12 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 
 
-export default function signInForm() {
+export default function SignInForm() {
     const supabase = createClient("https://vkulxphxyccehtzaqngk.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrdWx4cGh4eWNjZWh0emFxbmdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NzcyMDIyNjMsImV4cCI6MTk5Mjc3ODI2M30.KiXG-sdddT_3sCP9lLGmF1iUsfkk8rK1ZebsDHae5LU")
     // Sample Data Set
-    const objects = [{id:'1', item:'beepboop'}, {id:'2', item:"bap"}, {id:'3',  item:"beemboom"}]
-    const folders = [{id:'1', name:"Folder1"}, {id:'2', name:'Folder2'}, {id:'3', name:'Folder3'}]
+    
     const colour_set = ["#d8e2dc", "#ffe5d9", '#ffcad4', '#f4acb7', '#9d8189']
-    const router = useRouter()
+    
 
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
@@ -473,18 +472,7 @@ export default function signInForm() {
 
     }
 
-    function colouriterator(index) {
-        console.log("Setting Index")
-        
-        if (index >= colour_set.length) {
-            var index = 0 
-            
-            
-        } 
-        return index
-
-        
-    }
+   
 
 
     function handleOnDragEnd(result) { 
