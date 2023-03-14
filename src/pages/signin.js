@@ -637,7 +637,7 @@ export default function SignInForm() {
                                 </FormControl>
                             )}
                         </Field>
-                        <Link href="/signup"><Text as="u"> Don$apos;t have an account </Text></Link><br /><br /><br />
+                        <Link href="/signup"><Text as="u"> Don`$apos;t` have an account </Text></Link><br /><br /><br />
                         <Button
                             w="200px"
                             mt={4}
