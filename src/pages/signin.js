@@ -52,8 +52,8 @@ export default function signInForm() {
         return (
         
             <Box  zIndex={10} left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' bgColor="white" p='7' padding="20px" borderRadius='3xl' textAlign="center">
-            <h3>{props.index}</h3>
-            <h3>{props.folderName}</h3>
+            <Button onClick={() => setDisplayFolder(false)} padding="4px" bgColor="transparent" pos="absolute" top={0} left={0}>X</Button>
+            <Text padding="2px" fontWeight='bold' fontSize="25px" top={0} left={0}>{props.folderName}</Text>
             <Flex>
             
             <Formik
@@ -116,7 +116,7 @@ export default function signInForm() {
                         {({field, form}) => (
                             <FormControl isInvalid={form.errors.name && form.touched.name}>
                                 <FormLabel>Name of Link</FormLabel>
-                                <Input marginBottom="5px" {...field} placeholder='Name of Link' />
+                                <Input width="700px" marginBottom="5px" {...field} placeholder='Name of Link' />
                                 <FormErrorMessage>{form.errors.name}</FormErrorMessage>
                             </FormControl>
                         )}
@@ -142,12 +142,52 @@ export default function signInForm() {
 
             </Formik>
             <Spacer />
-            <Box marginRight="100px" boxShadow="2xl" borderRadius="20px" padding="10px" w="auto" h="400px" overflow="scroll">
-                <h1>Display for Folders</h1>
+            {folder.length > 0?<Box marginRight="100px" padding="20px" w="auto" h="auto" overflow-y="scroll">
+                <h1>Links</h1>
+                <DragDropContext onDragEnd={handleOnDragEndFolderLink}>
+                    <Droppable droppableId="folders">
+                        {(provided) => (
+                            
+                            <div className="folders" {...provided.droppableProps} ref={provided.innerRef}>
+                                
+                                {folder.map((object, index) => {
+                                    {console.log(Object.keys(object)[0])}
+                                    
+                                    return (
+                                        
+                                            <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
+                                            {(provided) => (
+                                                
+                                                <Box type="button" zIndex={1} key={Object.keys(object)[0]} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                    <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                            
+                                        
+                                        
+                                       
+                                    )
+                                })}
+                                {provided.placeholder}
+
+                            </div>
+                            
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </Box>: 
+            
+            <Box marginRight="200px" padding="20px" w="auto" h="auto" >
+                <Text> This folder is Empty :(</Text>
             </Box>
+            }
+            
+            
             
             </Flex>
             </Box>
+            
             
             
         
@@ -186,6 +226,9 @@ export default function signInForm() {
                     var keys = Object.keys(current_nested_dictionary)
                     for (let key_index=0; key_index <= keys.length; key_index++) {
                         var relative_value = current_nested_dictionary[keys[key_index]]
+                        if (relative_value === undefined) {
+                            continue
+                        }
                         console.log(`Relative value for Key: ${keys[key_index]} --> ${relative_value}`)
                         var d = {}
                         d[keys[key_index]] = relative_value
@@ -194,7 +237,7 @@ export default function signInForm() {
                     }
                     setFolder(array)
                     console.log("Array that has been set for UseState: ", array)
-                    
+
                 }
             }
         }
@@ -283,6 +326,16 @@ export default function signInForm() {
         const [reorderedItem] = folder_items.splice(result.source.index, 1)
         folder_items.splice(result.destination.index, 0, reorderedItem)
         setFolderDisplayArray(folder_items)
+    }
+
+    function handleOnDragEndFolderLink(result) {
+        if (!result.destination) return;
+        console.log("folder in File result: ", result)
+        const updated_folder = Array.from(folder)
+        const [reorderedItem] = updated_folder.splice(result.source.index, 1)
+        updated_folder.splice(result.destination.index, 0, reorderedItem)
+        setFolder(updated_folder)
+
     }
 
     function validateUser(username) {
