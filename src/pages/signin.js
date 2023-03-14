@@ -101,8 +101,75 @@ export default function signInForm() {
         console.log("Deleting Folder Process Complete")
         setDisplayFolder(false)
 
+    }
+
+    function deleteLinkWithinFolder(index, name) {
+        console.log(`Deleting Link at Index: ${index}`)
+        const new_array = {}
+        for (let i =0; i <= folder.length; i++) {
+            const current_dict = folder[i]
+            if (current_dict === undefined || current_dict === null) {
+                continue
+            } else {
+                if (i === index) {
+                    continue
+                } else {
+                    const current_key = Object.keys(current_dict)[0]
+                    const current_val = current_dict[current_key]
+                    new_array[current_key] = current_val
+                }
+
+            }
+            
+        }
+        
 
         
+        const userData = fetchCurrentUserData()
+        const userFolders = userData['folders']
+        const current_user_id = userData['id']
+        for (let i=0; i <= userFolders.length; i++) {
+            var current_folder_new = userFolders[i]
+            
+            console.log("Current  Folder Array: ", current_folder_new)
+            if (current_folder_new === undefined) {
+                console.log("Skipped")
+                continue
+            } else {
+                if (current_folder_new === undefined) {
+                    current_folder_new = {}
+                } 
+
+                current_folder_new = JSON.parse(current_folder_new)
+                const current_folder_key = Object.keys(current_folder_new)[0]
+                console.log("Current Folder Key: ", current_folder_key)
+                var relative_keys = Object.keys(current_folder_new[current_folder_key])
+                for (let j=0; j <= relative_keys.length; j++) {
+                    if (relative_keys[j] === undefined) {
+                        continue
+                    } else {
+                        const current_elm = relative_keys[j]
+                        console.log("Current Elm: ", current_elm)
+                        if (current_elm === name) {
+                            console.log("Found Match")
+                            current_folder_new[current_folder_key] = JSON.stringify(new_array)
+                        
+                        } else {
+                            console.log(`Current Elm: ${current_elm} does not match`)
+                        }
+
+                    }
+                    
+                    userFolders[i] = JSON.stringify(current_folder_new)
+                    
+                }
+                
+            }
+        }
+        console.log("Updated userFolders: ", userFolders)
+        updateFolderJson(current_user_id, userFolders, userData)
+
+
     }
 
     // *****************************************************
@@ -225,9 +292,11 @@ export default function signInForm() {
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
-                                                <Box type="button" zIndex={1} key={Object.keys(object)[0]} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                <Flex type="button" zIndex={1} key={Object.keys(object)[0]} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
-                                                </Box>
+                                                    <Spacer />
+                                                    <Button whiteSpace="normal" colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLinkWithinFolder(index, Object.keys(object)[0])}></Button>
+                                                </Flex>
                                             )}
                                         </Draggable>
                                             
