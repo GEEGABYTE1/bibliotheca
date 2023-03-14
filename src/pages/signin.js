@@ -74,6 +74,37 @@ export default function signInForm() {
 
     }
 
+    function deleteFolder(name) {
+        console.log(`Folder Index to Delete: ${name}`)
+        const new_array_folders = []
+        
+        const userData = fetchCurrentUserData()
+        const current_user_id = userData['id']
+        const current_folder_array = userData['folders']
+        for (let i=0; i <= current_folder_array.length; i++) {
+            const current_json_string = current_folder_array[i]
+            if (current_json_string === undefined) {
+                continue
+            }
+            var current_dict = JSON.parse(current_json_string)
+            console.log("Current Prospecting Dictionary: ", current_dict)
+            const current_dict_key = Object.keys(current_dict)[0]
+            if (current_dict_key === name) {
+                continue
+            } else {
+                current_dict = JSON.stringify(current_dict)
+                new_array_folders.push(current_dict)
+            }
+        }
+        console.log("New Array of Folders: ", new_array_folders)
+        updateFolderJson(current_user_id, new_array_folders, userData)
+        console.log("Deleting Folder Process Complete")
+        setDisplayFolder(false)
+
+
+        
+    }
+
     // *****************************************************
     const handleTitleClick = (e, href) => {
         e.preventDefault()
@@ -87,7 +118,9 @@ export default function signInForm() {
         
             <Box  zIndex={10} left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' bgColor="white" p='7' padding="20px" borderRadius='3xl' textAlign="center">
             <Button onClick={() => setDisplayFolder(false)} padding="4px" bgColor="transparent" pos="absolute" top={0} left={0}>X</Button>
-            <Text padding="2px" fontWeight='bold' fontSize="25px" top={0} left={0}>{props.folderName}</Text>
+            
+            <Text padding="2px" fontWeight='bold' fontSize="25px">{props.folderName}</Text>
+            <Button pos="absolute" top={0} right={0} colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteFolder(props.folderName)}></Button>
             <Flex>
             
             <Formik
@@ -144,13 +177,13 @@ export default function signInForm() {
                 
             }}
             >{(props) => (
-                <Box marginLeft='100px'>
+                <Box marginLeft='100px' w="1000px">
                 <Form>
                     <Field name='name' validate={validateName}>
                         {({field, form}) => (
                             <FormControl isInvalid={form.errors.name && form.touched.name}>
                                 <FormLabel>Name of Link</FormLabel>
-                                <Input width="700px" marginBottom="5px" {...field} placeholder='Name of Link' />
+                                <Input marginBottom="5px" {...field} placeholder='Name of Link' />
                                 <FormErrorMessage>{form.errors.name}</FormErrorMessage>
                             </FormControl>
                         )}
@@ -176,7 +209,7 @@ export default function signInForm() {
 
             </Formik>
             <Spacer />
-            {folder.length > 0?<Box marginRight="100px" padding="20px" w="auto" h="auto" overflow-y="scroll">
+            {folder.length > 0?<Box marginLeft= "80px" marginRight="100px" padding="20px" w="auto" h="auto" overflow-y="scroll">
                 <h1>Links</h1>
                 <DragDropContext onDragEnd={handleOnDragEndFolderLink}>
                     <Droppable droppableId="folders">
@@ -283,19 +316,25 @@ export default function signInForm() {
         const userDataFolder = fetchCurrentUserData()
         console.log("Updated User Dictionary ", userDataFolder)
         const folder_array_db = userDataFolder['folders']
-        for (let i=0; i <= folder_array_db.length; i++) {
-            var current_folder_json_string = folder_array_db[i]
-            if (current_folder_json_string === undefined) {
-                continue
-            } else {
-                var converted_json_string_dict = JSON.parse(current_folder_json_string)
-                console.log("Converted JSON string dict from Supabase: ", converted_json_string_dict)
-                folder_array_dict.push(converted_json_string_dict)
-
+        if (folder_array_db === undefined || folder_array_db === null) {
+            setFolderDisplayArray([])
+        } else {
+            for (let i=0; i <= folder_array_db.length; i++) {
+                var current_folder_json_string = folder_array_db[i]
+                if (current_folder_json_string === undefined) {
+                    continue
+                } else {
+                    var converted_json_string_dict = JSON.parse(current_folder_json_string)
+                    console.log("Converted JSON string dict from Supabase: ", converted_json_string_dict)
+                    folder_array_dict.push(converted_json_string_dict)
+    
+                }
+    
+    
             }
 
-
         }
+        
 
         console.log("Formatted Array for Folder Display: ", folder_array_dict)
         setFolderDisplayArray(folder_array_dict)
@@ -550,8 +589,11 @@ export default function signInForm() {
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
+                                                
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                    
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
+                                                    
                                                 </Box>
                                             )}
                                         </Draggable>
@@ -878,19 +920,25 @@ export default function signInForm() {
     function folderArrayFormulation(array_json) {
         
         var new_array = []
-        
-        for (let i=0; i <= array_json.length; i++) {
-            const current_json_string = array_json[i]
-            console.log("Array JSon", current_json_string)
-            if (current_json_string === undefined) {
-                continue
-            } else {
-                const converted_current_json_string = JSON.parse(current_json_string)
-                
-                new_array.push(converted_current_json_string)
+        console.log("initial array json: ", array_json)
+        if (array_json === null) {
+            return new_array
+        } else {
+            for (let i=0; i <= array_json.length; i++) {
+                const current_json_string = array_json[i]
+                console.log("Array JSon", current_json_string)
+                if (current_json_string === undefined) {
+                    continue
+                } else {
+                    const converted_current_json_string = JSON.parse(current_json_string)
+                    
+                    new_array.push(converted_current_json_string)
+                }
+             
             }
-         
+
         }
+        
         return new_array
     }
     useEffect(() => {
