@@ -1,5 +1,5 @@
 
-import {Box, Flex, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText, color,} from '@chakra-ui/react'
+import {Box, Flex, Spacer, Button, Text, Center, FormControl, Input, FormLabel, FormErrorMessage, FormHelperText, color,} from '@chakra-ui/react'
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -53,6 +53,8 @@ export default function signInForm() {
             <Box  zIndex={10} left={3} right={2} pos="fixed" m={[10, 100]} boxShadow="2xl" rounded='md' bgColor="white" p='7' padding="20px" borderRadius='3xl' textAlign="center">
             <h3>{props.index}</h3>
             <h3>{props.folderName}</h3>
+            <Flex>
+            
             <Formik
             initialValues={{ name: '', link:'' }}
             onSubmit={(values, actions) => {
@@ -63,11 +65,40 @@ export default function signInForm() {
                 // Link DB Update
                 const userData = fetchCurrentUserData()
                 console.log("Updated User Dictionary ", userData)
-                const current_link_json = userData['links']
-                console.log("Current JSON format for links", current_link_json)
-                const current_user_id = userData['id']
+                var current_folder_json = userData['folders']
+                var user_id = userData['id']
+                console.log("Current JSON format for folders: ", current_folder_json)
+                
                 const link_name = `${values['name']}`
                 const link_string = values['link']
+                for (let i=0; i <= current_folder_json.length; i++) {
+                    const json_string = current_folder_json[i]
+                    if (json_string === undefined) {
+                        continue
+                    }
+                    var rel_dict = JSON.parse(json_string)
+                    const rel_dict_key = Object.keys(rel_dict)[0]
+                    if (rel_dict_key === props.folderName) {
+                        if (rel_dict[rel_dict_key] === '{}') {
+                            var current_nested_dictionary = JSON.parse(rel_dict[rel_dict_key])
+                        } else {
+                            var current_nested_dictionary = rel_dict[rel_dict_key]
+                        }
+                        
+                        console.log("Current Nested Dictionary: ", current_nested_dictionary)
+                        current_nested_dictionary[link_name] = link_string
+                        rel_dict[rel_dict_key] = current_nested_dictionary
+                        console.log("Converted Nested Dictionary: ", rel_dict)
+                        var updated_dict = JSON.stringify(rel_dict)
+                        current_folder_json[i] = updated_dict
+                        console.log("Updated Folder JSON Array: ", current_folder_json)
+
+                        
+                        updateFolderJson(user_id, current_folder_json, userData)
+                    } else {
+                        continue
+                    }
+                }
 
 
 
@@ -78,7 +109,7 @@ export default function signInForm() {
                 
             }}
             >{(props) => (
-                <Box>
+                <Box marginLeft='100px'>
                 <Form>
                     <Field name='name' validate={validateName}>
                         {({field, form}) => (
@@ -109,6 +140,12 @@ export default function signInForm() {
 
 
             </Formik>
+            <Spacer />
+            <Box marginRight="100px" boxShadow="2xl" borderRadius="20px" padding="10px" w="auto" h="400px" overflow="scroll">
+                <h1>Display for Folders</h1>
+            </Box>
+            
+            </Flex>
             </Box>
             
             
