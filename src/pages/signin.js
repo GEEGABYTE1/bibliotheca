@@ -769,14 +769,14 @@ export default function SignInForm() {
                                 
                                 {linkDisplayArray.map((object, index) => {
                                     return (
-                                        <div>
+                                        <div key={object.id}>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                                 <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#bbd0ff"} padding="8px" marginBottom="20px" h="auto" w="500px">
-                                                    <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
-                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
-                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
+                                                    <h3 key={object.id}><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
+                                                    <Button key={object.id} type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
+                                                    <Button key={object.id} type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
                                                 </Box>
                                                 </Center>
                                             )}
@@ -804,14 +804,14 @@ export default function SignInForm() {
                                 {linkDisplayArray.map((object, index) => {
                                     
                                     return (
-                                        <div>
+                                        <div key={object.id}>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                                 <Center>
                                                 <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#e7c6ff"} padding="8px" marginBottom="20px" h="auto" w="500px">
-                                                    <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
-                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
-                                                    <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
+                                                    <h3 key={object.id}><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
+                                                    <Button key={object.id} type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
+                                                    <Button key={object.id} type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
                                                 </Box>
                                                 </Center>
                                             )}
