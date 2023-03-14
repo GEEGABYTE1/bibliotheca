@@ -12,6 +12,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   return (
+    <div>
+    <Head>
+        <title>Bibliotheca</title>
+            
+      </Head>
+    
     <Box height="900px" width="auto" backgroundImage="url('/images/Wallpaper3.png')" backgroundPosition="center" backgroundSize="cover"
   backgroundRepeat="no-repeat">
     
@@ -26,5 +32,6 @@ export default function Home() {
      
     
     </Box>
+    </div>
   )
 }

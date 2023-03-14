@@ -4,6 +4,7 @@ import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import Head from 'next/head'
 
 export default function SignInForm() {
     
@@ -53,6 +54,11 @@ export default function SignInForm() {
     })
 
     return (
+        <div>
+        <Head>
+            <title>Bibliotheca</title>
+        </Head>
+        
         <Box height="900px" width="auto" backgroundImage="url('/images/Wallpaper2.png')" backgroundPosition="center" backgroundSize="cover"
   backgroundRepeat="no-repeat">
         <div>
@@ -121,6 +127,7 @@ export default function SignInForm() {
         </Center>
         </div>
         </Box>
+        </div>
 
     )
 }

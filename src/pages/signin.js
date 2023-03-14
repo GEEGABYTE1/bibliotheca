@@ -3,6 +3,7 @@ import {Box, Image, Flex, Spacer, Button, Text, Center, FormControl, Input, Form
 import { Field, Form, Formik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import {createClient} from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
 import {BsLink} from 'react-icons/bs'
@@ -637,7 +638,7 @@ export default function SignInForm() {
                                 </FormControl>
                             )}
                         </Field>
-                        <Link href="/signup"><Text as="u"> Don`$apos;t` have an account </Text></Link><br /><br /><br />
+                        <Link href="/signup"><Text as="u"> Create an Account? </Text></Link><br /><br /><br />
                         <Button
                             w="200px"
                             mt={4}
@@ -1173,6 +1174,9 @@ export default function SignInForm() {
 
     return (
         <div>
+            <Head>
+                <title>Bibliotheca</title>
+            </Head>
             {authStatus?<SuccessSignIn username={username} />:<HomePage />}    
             
         </div>
