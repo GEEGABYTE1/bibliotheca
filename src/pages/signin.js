@@ -103,7 +103,7 @@ export default function signInForm() {
 
     }
 
-    function deleteLinkWithinFolder(index, name) {
+    function deleteLinkWithinFolder(index, fileName) {
         console.log(`Deleting Link at Index: ${index}`)
         const new_array = {}
         for (let i =0; i <= folder.length; i++) {
@@ -128,46 +128,54 @@ export default function signInForm() {
         const userData = fetchCurrentUserData()
         const userFolders = userData['folders']
         const current_user_id = userData['id']
+        var folder_to_change = undefined
+        // need to fix iteration
+        console.log("Current JSON format for userFolders: ", userFolders)
+        
         for (let i=0; i <= userFolders.length; i++) {
-            var current_folder_new = userFolders[i]
-            
-            console.log("Current  Folder Array: ", current_folder_new)
-            if (current_folder_new === undefined) {
-                console.log("Skipped")
+            const current_json_string = userFolders[i]
+            if (current_json_string === undefined) {
                 continue
             } else {
-                if (current_folder_new === undefined) {
-                    current_folder_new = {}
-                } 
+                var rel_dict = JSON.parse(current_json_string)
+                console.log("Relative Dictionary: ", rel_dict)
+                var rel_key = Object.keys(rel_dict)[0]
+                console.log("Relative Key for Parent Dictionary: ", rel_key)
+                var nested_link_dictionary = rel_dict[rel_key]
+                console.log("Nested Link Dictionary: ", nested_link_dictionary)
+                var nested_link_dictionary_keys = Object.keys(nested_link_dictionary)
 
-                current_folder_new = JSON.parse(current_folder_new)
-                const current_folder_key = Object.keys(current_folder_new)[0]
-                console.log("Current Folder Key: ", current_folder_key)
-                var relative_keys = Object.keys(current_folder_new[current_folder_key])
-                for (let j=0; j <= relative_keys.length; j++) {
-                    if (relative_keys[j] === undefined) {
-                        continue
-                    } else {
-                        const current_elm = relative_keys[j]
-                        console.log("Current Elm: ", current_elm)
-                        if (current_elm === name) {
-                            console.log("Found Match")
-                            current_folder_new[current_folder_key] = JSON.stringify(new_array)
-                        
+                console.log("Filename to Compare: ", fileName)
+                for (let link_index=0;link_index <= nested_link_dictionary_keys.length; link_index++) {
+                   var current_key = nested_link_dictionary_keys[link_index]
+                   if (current_key === fileName) {
+                        console.log(`Key ${rel_key} needs to be altered as both keys match`)
+                        folder_to_change = rel_key
+                        if (Object.keys(new_array).length === 0) {
+                            rel_dict[rel_key] = JSON.stringify(new_array)
                         } else {
-                            console.log(`Current Elm: ${current_elm} does not match`)
+                            rel_dict[rel_key] = new_array
                         }
-
-                    }
-                    
-                    userFolders[i] = JSON.stringify(current_folder_new)
-                    
+                        
+                        
+                        rel_dict = JSON.stringify(rel_dict)
+                        userFolders[i] = rel_dict
+                        updateFolderJson(current_user_id, userFolders, userData)
+                        console.log("Updated userFolders", userFolders)
+                        break
+                   } else {
+                    continue
+                   }
                 }
+
                 
+                console.log("Deleting Link within Folder Process Complete")
+                
+
+                
+
             }
         }
-        console.log("Updated userFolders: ", userFolders)
-        updateFolderJson(current_user_id, userFolders, userData)
 
 
     }
