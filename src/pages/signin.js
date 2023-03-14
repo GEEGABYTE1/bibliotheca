@@ -41,6 +41,23 @@ export default function signInForm() {
     const [linkDisplayArray, setLinkDisplayArray] = useState([])
     const [folderDisplayArray, setFolderDisplayArray] = useState([])
 
+    // Signout Function
+
+    async function supabaseSignout() {
+        const {error} = await supabase.auth.signOut()
+            
+    
+
+}
+
+    function signOut(e) {
+        e.preventDefault()
+        console.log("Signing out")
+        const sign_out_result = supabaseSignout()
+        setStatus(false)
+    }
+
+
 
 
     // *****************************************************
@@ -184,6 +201,7 @@ export default function signInForm() {
     // *****************************************************
     const handleTitleClick = (e, href) => {
         e.preventDefault()
+        console.log("Href: ", href)
         document.location.href = 'https://' + href
 
     }
@@ -301,10 +319,12 @@ export default function signInForm() {
                                             <Draggable key={Object.keys(object)[0]} draggableId={Object.keys(object)[0]} index={index}>
                                             {(provided) => (
                                                 
-                                                <Flex type="button" zIndex={1} key={Object.keys(object)[0]} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
-                                                    <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
+                                                <Flex type="button" zIndex={1} key={Object.keys(object)[0]} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={'#bbd0ff'} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                    <button> <a href={object[Object.keys(object)[0]]} onClick={(e) => handleTitleClick(e, object[Object.keys(object)[0]])}><h3>{Object.keys(object)[0]}</h3></a></button>
+                                                    
                                                     <Spacer />
                                                     <Button whiteSpace="normal" colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLinkWithinFolder(index, Object.keys(object)[0])}></Button>
+                                                    
                                                 </Flex>
                                             )}
                                         </Draggable>
@@ -663,7 +683,7 @@ export default function signInForm() {
   backgroundRepeat="no-repeat">
                 <Text padding="10px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
                 
-
+ 
                 
                 <Center>
                 
@@ -688,7 +708,7 @@ export default function signInForm() {
                                             {(provided) => (
                                                 
                                                 <Center>
-                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#e7c6ff"} padding="8px" marginBottom="20px" h="auto" w="500px" >
                                                     
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
                                                     
@@ -726,7 +746,7 @@ export default function signInForm() {
                                             {(provided) => (
                                                 
                                                 <Center>
-                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px" >
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#e7c6ff"} padding="8px" marginBottom="20px" h="auto" w="500px" >
                                                     
                                                     <button onClick={(e) => openFolder(e, index, Object.keys(object)[0])}><h3>{Object.keys(object)[0]}</h3></button>
                                                     
@@ -766,7 +786,7 @@ export default function signInForm() {
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                                 <Center>
-                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#bbd0ff"} padding="8px" marginBottom="20px" h="auto" w="500px">
                                                     <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
@@ -801,7 +821,7 @@ export default function signInForm() {
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
                                             {(provided) => (
                                                 <Center>
-                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={colour_set[colouriterator(index)]} padding="8px" marginBottom="20px" h="auto" w="500px">
+                                                <Box type="button" zIndex={1} key={object.id} {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef} border="solid" borderRadius="20px" bgColor={"#e7c6ff"} padding="8px" marginBottom="20px" h="auto" w="500px">
                                                     <h3><a href={object.link} onClick={(e) => handleTitleClick(e, object.link)}><Text fontSize="lg">{object.name}</Text></a></h3>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => console.log()}></Button>
                                                     <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiFillDelete />} onClick={() => deleteLink(index)}></Button>
@@ -844,10 +864,20 @@ export default function signInForm() {
 
 
                 <Center > 
-                <Box zIndex={4} pos="fixed" bottom="7" bgColor="tomato" borderColor='tomato' color="white" display="flex" columnGap="50%" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
+                <Flex zIndex={4} pos="fixed" bottom="7" bgColor="#ffafcc" borderColor='tomato' color="white" alignItems="center" justifyContent="center" padding="5px"  borderRadius='lg'  w='30%'>
+                    <Box>
                      <Button type='button' size="lg" colorScheme='gray.200' variant="ghost" leftIcon={<BsLink />} onClick={(e) => handleLinkStatus(e)}></Button>
+                     </Box>
+                     <Spacer />
+                     <Box>
                      <Button type='button' size="lg"   colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineFolderAdd />} onClick={() => handleFolderStatus()}></Button>
-                </Box>
+                     </Box>
+                     <Spacer />
+                     <Box>
+                    <Button type='button' size="lg" colorScheme='gray.200' variant="ghost" rightIcon={<AiOutlineHome />} onClick={(e) => signOut(e)}></Button>
+                    </Box>
+                     
+                </Flex>
                 </Center>
                 </Box>
             </div>
