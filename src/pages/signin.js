@@ -637,7 +637,7 @@ export default function SignInForm() {
                                 </FormControl>
                             )}
                         </Field>
-                        <Link href="/signup"><Text as="u"> Don't have an account </Text></Link><br /><br /><br />
+                        <Link href="/signup"><Text as="u"> Don$apos;t have an account </Text></Link><br /><br /><br />
                         <Button
                             w="200px"
                             mt={4}
@@ -768,7 +768,6 @@ export default function SignInForm() {
                             <div className="objects" {...provided.droppableProps} ref={provided.innerRef}>
                                 
                                 {linkDisplayArray.map((object, index) => {
-                                    {console.log(object.id)}
                                     return (
                                         <div>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
@@ -803,7 +802,7 @@ export default function SignInForm() {
                             <div className="objects" {...provided.droppableProps} ref={provided.innerRef}>
                                 
                                 {linkDisplayArray.map((object, index) => {
-                                    {console.log(object.id)}
+                                    
                                     return (
                                         <div>
                                             <Draggable key={object.id} draggableId={object.id} index={index}>
