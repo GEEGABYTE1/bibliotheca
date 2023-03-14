@@ -882,7 +882,7 @@ export default function SignInForm() {
             initialValues={{ name: ''}}
             onSubmit={(values, actions) => {
                 setTimeout(() => {
-                alert(JSON.stringify(values, null, 2))
+                alert(`Folder: '${values['name']}' Successfully Added 🎉`)
                 setFolderStatus(false)
                 // DB Update
                 const userData = fetchCurrentUserData()
@@ -1010,7 +1010,7 @@ export default function SignInForm() {
             initialValues={{ name: '', link:'' }}
             onSubmit={(values, actions) => {
                 setTimeout(() => {
-                alert(JSON.stringify(values, null, 2))
+                alert(`Link '$apos;'${values['name']}'$apos;'Successfully Added 🎉`)
                 
 
                 // Link DB Update
