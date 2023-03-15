@@ -8,8 +8,8 @@ import Head from 'next/head'
 
 export default function SignInForm() {
     
-    const url = NEXT_PUBLIC_DB_URL
-    const key = NEXT_PUBLIC_DB_KEY
+    const url = process.env.NEXT_PUBLIC_DB_URL
+    const key = process.env.NEXT_PUBLIC_DB_KEY
     const supabase = createClient(url, key)
     const [buttonSubmission, setbuttonSubmission] = useState(false)
     const [username, setUsername] = useState('')
