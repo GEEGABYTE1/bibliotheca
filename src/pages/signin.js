@@ -670,7 +670,7 @@ export default function SignInForm() {
                 {addLinkStats?<LinkForm />:console.log("Link View is Dismissed")}
                 {addFolderStatus?<FolderForm />:console.log("Folder View is Dismissed")}
                 {displayFolder?<FolderDisplay index={folderIndex} folderName={folderName}/>:console.log("Folder display is dismissed")}
-                <Box height="1000px" width="auto" backgroundImage="url('/images/Wallpaper5.png')" backgroundPosition="center" backgroundSize="cover"
+                <Box minHeight="900px" maxHeight="1000px" width="auto" backgroundImage="url('/images/Wallpaper5.png')" backgroundPosition="center" backgroundSize="cover"
   backgroundRepeat="no-repeat">
                 <Text padding="10px" fontWeight='bold' fontSize="30px" top={0} left={0}>Welcome {props.username}!</Text>
                 
@@ -681,7 +681,7 @@ export default function SignInForm() {
                     
                 <Box zIndex={1} marginTop="5%"textAlign="center"  display="flex" padding="100px" h="auto" w="auto" flexDirection="row">
 
-                    {folderDisplayArray.length <= 5?<Box zIndex={1} boxShadow="2xl" w="600px" borderRadius="20px" padding="10px" h="400px">
+                    {folderDisplayArray.length <= 5?<Box zIndex={1} boxShadow="2xl" w="300px" borderRadius="20px" padding="10px" h="400px">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
@@ -720,7 +720,7 @@ export default function SignInForm() {
                         )}
                     </Droppable>
                 </DragDropContext>
-                </Box>: <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" w="600px" h="400px" overflowX="hidden" overflowY="scroll">
+                </Box>: <Box zIndex={1} boxShadow="2xl" borderRadius="20px" padding="10px" w="300px" h="400px" overflowX="hidden" overflowY="scroll">
                 <Text marginBottom='20px' fontWeight='bold' fontSize='20px'> Folders </Text>
                 <DragDropContext onDragEnd={handleOnDragEndFolder}>
                     <Droppable droppableId="folders">
